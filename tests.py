@@ -5,10 +5,8 @@ from main import BooksCollector
 
 class TestBooksCollector:
     #  Тест: добавление 4-х книг в словарь
-    def test_add_new_book_add_four_books(self):
-        collector_books = BooksCollector()
-        generate_books_genre(collector_books)
-        assert len(collector_books.get_books_genre()) == 4
+    def test_add_new_book_add_four_books(self, generate_books_genre):
+        assert len(generate_books_genre.get_books_genre()) == 4
 
     # Тест: проверяем количество символов в имени книги
     @pytest.mark.parametrize('new_name_book', [
@@ -61,11 +59,9 @@ class TestBooksCollector:
         assert collector_books.get_book_genre(name_book) == name_genre
 
     # Тест: получить список из 1 книги в жанре Детективы
-    def test_get_books_with_specific_genre_get_book_genre_detectives(self):
-        collector_books = BooksCollector()
-        generate_books_genre(collector_books)
-        assert 'Детектив Шерлок' in collector_books.get_books_with_specific_genre('Детективы') and len(
-            collector_books.get_books_with_specific_genre('Детективы')) == 1
+    def test_get_books_with_specific_genre_get_book_genre_detectives(self, generate_books_genre):
+        assert 'Детектив Шерлок' in generate_books_genre.get_books_with_specific_genre('Детективы') and len(
+            generate_books_genre.get_books_with_specific_genre('Детективы')) == 1
 
     # Тест: получить словарь с книгами (не пусто (содержит 1-у книгу))
     def test_get_books_genre_contains_one_book(self, name_book='Гарри Поттер', name_genre='Фантастика'):
@@ -80,11 +76,9 @@ class TestBooksCollector:
         assert len(collector_books.get_books_genre()) == 0
 
     # Тест: получить подходящие книги для ребёнка
-    def test_get_books_for_children_proper_book(self):
-        collector_books = BooksCollector()
-        generate_books_genre(collector_books)
+    def test_get_books_for_children_proper_book(self, generate_books_genre):
         expected_books_for_children = ['Гарри Поттер', 'Лёлик и Болик', 'Маленькая ведьма']
-        assert collector_books.get_books_for_children() == expected_books_for_children
+        assert generate_books_genre.get_books_for_children() == expected_books_for_children
 
     # Тест: для ребёнка нет подходящих книг
     def test_get_books_for_children_empty(self, name_book='Чёрная борода', name_genre='Ужастик'):
@@ -96,7 +90,7 @@ class TestBooksCollector:
     # Тест: добавили 1-у книгу в избранные
     def test_add_book_in_favorites_add_one_new_book(self):
         collector_books = BooksCollector()
-        generate_books_genre(collector_books)
+        collector_books.add_new_book('Лёлик и Болик')
         expected_book_in_favorites = ['Лёлик и Болик']
         collector_books.add_book_in_favorites('Лёлик и Болик')
         assert collector_books.favorites == expected_book_in_favorites
@@ -104,7 +98,8 @@ class TestBooksCollector:
     # Тест: пытаемся добавить книгу, которая есть в избранных
     def test_add_book_in_favorites_add_duplicate_book(self):
         collector_books = BooksCollector()
-        generate_books_genre(collector_books)
+        collector_books.add_new_book('Лёлик и Болик')
+        collector_books.add_new_book('Планета сокровищ')
         expected_book_in_favorites = ['Лёлик и Болик']
         collector_books.add_book_in_favorites('Лёлик и Болик')
         collector_books.add_book_in_favorites('Лёлик и Болик')
@@ -129,12 +124,3 @@ class TestBooksCollector:
     def test_get_list_of_favorites_books_get_empty(self):
         collector_books = BooksCollector()
         assert len(collector_books.get_list_of_favorites_books()) == 0
-
-
-# Метод, который помогает заполнить объект тестовыми данными
-def generate_books_genre(obj):
-    new_books_name = ['Гарри Поттер', 'Лёлик и Болик', 'Маленькая ведьма', 'Детектив Шерлок']
-    genre_for_new_books = ['Фантастика', 'Мультфильмы', 'Фантастика', 'Детективы']
-    for i in range(0, len(new_books_name)):
-        obj.add_new_book(new_books_name[i])
-        obj.set_book_genre(new_books_name[i], genre_for_new_books[i])
